@@ -47,7 +47,7 @@ banner() {
     echo -e "└──────────────────────────────────────────────────────────────┘${RESET}"
     
     # GitHub Link
-    echo -e "\n${YELLOW}GitHub Repo:${RESET} https://github.com/mahajang214/shadow_link"
+    echo -e "\n${YELLOW}GitHub Repo:${RESET} https://github.com/mahajang214/drap"
     
     # Compatibility Warning
     echo -e "\n${RED}⚠️ Drap supports only LINUX — compatible with all major distributions!${RESET}"
