@@ -16,6 +16,20 @@
 
 ---
 
+## ⚡ Quick Start
+
+```sh
+# Clone the repository
+git clone https://github.com/mahajang214/drap.git
+cd drap
+
+# Make the script executable
+chmod +x drap.sh
+
+# Run Drap
+./drap.sh
+```
+
 ## 📸 Screenshots
 
 | Drap Menu                          | Installation Process                                  | Output Example                         |
