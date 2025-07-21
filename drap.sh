@@ -48,9 +48,7 @@ banner() {
     echo -e "${YELLOW}│││${RESET} Welcome back ${YELLOW}${OWNER_NAME}${RESET}                                         "
     echo -e "${YELLOW}──────────────────────────────────────────────────────────────${RESET}"
     
-    # GitHub Link
-    echo -e "\n${YELLOW}GitHub Repo:${RESET} https://github.com/mahajang214/drap"
-        
+    
     # Brief Intro
     echo -e "\n${CYAN}Drap: A smart, cross-distro installer framework —"
     echo -e "   Auto-detects your package manager and installs tools via:"
@@ -60,7 +58,10 @@ banner() {
     echo -e "${GREEN}.............................................."
     echo -e "${GREEN}: Drap — One command. Any distro. Every tool :${RESET}"
     echo -e "${GREEN}.............................................."
-    echo -e "Contribute or report bugs on GitHub to help improve Drap."
+    echo -e "\nContribute or report bugs on GitHub to help improve Drap."
+    # GitHub Link
+    echo -e "${YELLOW}GitHub Repo:${RESET} https://github.com/mahajang214/drap"
+        
     
     # Simulate loading
     echo
