@@ -6,6 +6,8 @@
 
 ---
 
+**Drap** can install, uninstall, update packages.
+
 ## ✨ Features
 
 - **Universal**: Works on any major Linux distro (Debian, Ubuntu, Arch, Fedora, openSUSE, Alpine, Nix, etc.)

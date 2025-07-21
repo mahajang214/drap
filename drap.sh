@@ -7,6 +7,8 @@ CYAN='\e[96m'
 RESET="\e[0m"
 CURRENT_OS_DOWNLOAD_CMD=""
 
+OWNER_NAME=$(whoami)
+
 clear
 
 banner() {
@@ -29,7 +31,7 @@ banner() {
     echo -e "${RESET}"
     
     # Subtitle Centered
-    subtitle="Universal Packages Installer "
+    subtitle="Universal Packages Downloader" 
     padding=$(( (term_width - ${#subtitle}) / 2 ))
     printf "%*s%s\n" "$padding" "" "$subtitle"
     
@@ -37,23 +39,20 @@ banner() {
     echo -e "${CYAN}──────────────────────────────────────────────────────────────${RESET}"
     
     # Description
-    echo -e "${CYAN}A cross-distro intelligent tool installer${RESET}"
+    echo -e "${CYAN}A cross-distro intelligent tool downloader${RESET}"
     echo -e "${CYAN}Supports: apt, pacman, dnf, yum, zypper, apk, nix, flatpak, snap${RESET}"
     
     # Author Box
-    echo
-    echo -e "${YELLOW}┌──────────────────────────────────────────────────────────────┐"
-    echo -e "│ Crafted with ❤️ by Gaurav Mahajan                            │"
-    echo -e "└──────────────────────────────────────────────────────────────┘${RESET}"
+    echo -e "\n${YELLOW}Author: ${RESET} Gaurav Mahajan"
+    echo -e "${YELLOW}──────────────────────────────────────────────────────────────${RESET}"
+    echo -e "${YELLOW}│││${RESET} Welcome back ${YELLOW}${OWNER_NAME}${RESET}                                         "
+    echo -e "${YELLOW}──────────────────────────────────────────────────────────────${RESET}"
     
     # GitHub Link
     echo -e "\n${YELLOW}GitHub Repo:${RESET} https://github.com/mahajang214/drap"
-    
-    # Compatibility Warning
-    echo -e "\n${RED}⚠️ Drap supports only LINUX — compatible with all major distributions!${RESET}"
-    
+        
     # Brief Intro
-    echo -e "\n${CYAN}🛠 Drap: A smart, cross-distro installer framework —"
+    echo -e "\n${CYAN}Drap: A smart, cross-distro installer framework —"
     echo -e "   Auto-detects your package manager and installs tools via:"
     echo -e "   apt, pacman, dnf, yum, zypper, apk, nix, flatpak, or snap.${RESET}"
     
@@ -61,14 +60,14 @@ banner() {
     echo -e "${GREEN}.............................................."
     echo -e "${GREEN}: Drap — One command. Any distro. Every tool :${RESET}"
     echo -e "${GREEN}.............................................."
-    echo -e "📢 Contribute or report bugs on GitHub to help improve Drap."
+    echo -e "Contribute or report bugs on GitHub to help improve Drap."
     
     # Simulate loading
     echo
     if command -v pv &>/dev/null; then
-        echo "Initializing Drap... ⌛" | pv -qL 10
+        echo "Initializing Drap... " | pv -qL 10
     else
-        echo -e "${BLUE}Initializing Drap... ⌛${RESET}"
+        echo -e "${BLUE}Initializing Drap... ${RESET}"
         sleep 1
     fi
     
@@ -202,25 +201,120 @@ download_tool(){
     done
     
 }
+
+uninstall_tool(){
+    if [[ -z "$CURRENT_OS_DOWNLOAD_CMD" ]]; then
+        echo -e "${RED}Error : cannot detect operating system. $RESET"
+        bye
+    fi
+    
+    for tool in "$@"; do
+        echo -e "${BLUE}Uninstalling $tool...$RESET"
+        
+        # Check if tool is installed
+        if ! command -v "$tool" &>/dev/null; then
+            echo -e "${YELLOW}$tool is not installed.$RESET"
+            exit 1;
+        fi
+        
+        # Uninstall based on package manager
+        case "$CURRENT_OS_DOWNLOAD_CMD" in
+            apt-get) sudo apt-get remove --purge -y "$tool" ;;
+            pacman) sudo pacman -Rns --noconfirm "$tool" ;;
+            dnf) sudo dnf remove -y "$tool" ;;
+            yum) sudo yum remove -y "$tool" ;;
+            zypper) sudo zypper remove -y "$tool" ;;
+            apk) sudo apk del "$tool" ;;
+            nix-env) sudo nix-env -e "$tool" ;;
+        esac
+        
+        echo -e "${GREEN}$tool successfully uninstalled.$RESET"
+    done
+}
+
+update_tool(){
+    if [[ -z "$CURRENT_OS_DOWNLOAD_CMD" ]]; then
+        echo -e "${RED}Error : cannot detect operating system. $RESET"
+        bye
+    fi
+    
+    for tool in "$@"; do
+        echo -e "${BLUE}Updating $tool...$RESET"
+        
+        # Check if tool is installed
+        if ! command -v "$tool" &>/dev/null; then
+            echo -e "${YELLOW}$tool is not installed.$RESET"
+            exit 1;
+        fi
+        
+        # Update based on package manager
+        case "$CURRENT_OS_DOWNLOAD_CMD" in
+            apt-get) sudo apt-get update && sudo apt-get install --only-upgrade -y "$tool" ;;
+            pacman) sudo pacman -Syu --noconfirm "$tool" ;;
+            dnf) sudo dnf upgrade -y "$tool" ;;
+            yum) sudo yum update -y "$tool" ;;
+            zypper) sudo zypper refresh && sudo zypper update -y "$tool" ;;
+            apk) sudo apk upgrade "$tool" ;;
+            nix-env) sudo nix-env -uA nixpkgs."$tool" ;;
+        esac
+        
+        echo -e "${GREEN}$tool successfully updated.$RESET"
+    done
+}
+
 #usage download_tool figlet toilet
 check_OS
 download_tool figlet
 banner
 sleep 1s;
 
-echo -e "${GREEN}Tools you want to install in your system."
-read -p "Enter tool names (space-separated): " tool_list
 
-# Convert string into array
-IFS=' ' read -r -a tools <<< "$tool_list"
+echo -e "${YELLOW}You can also choose to install, uninstall or update tools.${RESET}"
+select purpose in "install" "uninstall" "update"; do
+    case $purpose in
+        install)
+            echo -e "${GREEN}Tools you want to install in your system."
+            read -p "Enter tool names (space-separated): " tool_list
 
-# Loop over array correctly
-for tool in "${tools[@]}"; do
-    echo "Tool: $tool"
-    download_tool "$tool"
+            # Convert string into array
+            IFS=' ' read -r -a tools <<< "$tool_list"
+            echo -e "${GREEN}\nInstalling tools..."
+            # Loop over array correctly
+            for tool in "${tools[@]}"; do
+                echo "Tool: $tool"
+                download_tool "$tool"
+            done
+            break
+            ;;
+        uninstall)
+            echo -e "${GREEN}Tools you want to uninstall from your system."
+            read -p "Enter tool names (space-separated): " tool_list
+
+            # Convert string into array
+            IFS=' ' read -r -a tools <<< "$tool_list"
+            echo -e "${RED}Uninstalling tools...$RESET"
+            uninstall_tool "${tools[@]}"
+            exit 0
+            ;;
+        update)
+            echo -e "${GREEN}Tools you want to update in your system."
+            read -p "Enter tool names (space-separated): " tool_list
+
+            # Convert string into array
+            IFS=' ' read -r -a tools <<< "$tool_list"
+            echo -e "${BLUE}Updating tools...$RESET"
+            update_tool "${tools[@]}"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Exiting...$RESET"
+            exit 1
+            ;;
+    esac
 done
-# download_tool bat
 
-echo -e "$RESET"
+
+# download_tool bat
+echo -e "${GREEN}Successful... $RESET"
 bye
 
