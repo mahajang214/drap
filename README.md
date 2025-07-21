@@ -6,7 +6,7 @@
 
 ---
 
-**Drap** can install, uninstall, update packages.
+**Drap** can install, uninstall, update all packages.
 
 ## ✨ Features
 
